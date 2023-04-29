@@ -1,0 +1,26 @@
+<div>
+  <div>
+    <h3>Carritos</h3>
+  </div>
+  <div id="cartList"></div>
+  <div>
+    <table style="width:70%; background-color: #555555; font-size: 25px;">
+      <tr style="background-color: #000000;">
+        <td><b>id</b></td>
+        <td><b>products</b></td>
+        <td><b>quantity</b></td>
+      </tr>
+      {{#each carts}}
+        <tr>
+          <td headers="id">{{_id}}</td>
+          {{#each products}}
+            <td headers="products">{{_id}}</td>
+            <td headers="quantity">{{quantity}}</td>
+          {{/each}}
+        </tr>
+      {{/each}}
+    </table>
+  </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

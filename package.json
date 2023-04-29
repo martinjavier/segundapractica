@@ -1,0 +1,38 @@
+{
+  "name": "entregable",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martinjavier/entregable.git"
+  },
+  "keywords": [],
+  "author": "Martin Del Percio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/martinjavier/entregable/issues"
+  },
+  "homepage": "https://github.com/martinjavier/entregable#readme",
+  "dependencies": {
+    "alert": "^5.1.4",
+    "bcrypt": "^5.1.0",
+    "connect-mongo": "^5.0.0",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.0.1",
+    "express-session": "^1.17.3",
+    "mongoose": "^7.0.3",
+    "mongoose-paginate-v2": "^1.7.1",
+    "nodemon": "^2.0.20",
+    "passport": "^0.4.1",
+    "passport-github2": "^0.1.12",
+    "passport-local": "^1.0.0",
+    "socket.io": "^4.6.1",
+    "sweetalert2": "^11.7.3"
+  }
+}
