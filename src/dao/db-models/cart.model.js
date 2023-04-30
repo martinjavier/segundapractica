@@ -1,22 +1,36 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-const cartsSchema = new mongoose.Schema({
+export const cartCollection = "carts";
+
+const cartSchema = new mongoose.Schema({
   products: {
     type: [
       {
-        products: {
+        id: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "products",
         },
-        quantity: Number,
+        quantity: {
+          type: Number,
+          required: true,
+          default: 1,
+        },
       },
     ],
+    required: true,
     default: [],
   },
 });
 
-cartsSchema.plugin(mongoosePaginate);
+cartSchema.pre("find", function () {
+  this.populate("products.id");
+});
+
+// El parámetro "products.id" se refiere a la propiedad "id" del campo "products" del modelo "Cart".
+export const cartModel = mongoose.model(cartCollection, cartSchema);
+
+//cartsSchema.plugin(mongoosePaginate);
 
 /*
 cartsSchema.pre("findOne", function () {
@@ -24,6 +38,6 @@ cartsSchema.pre("findOne", function () {
 });
 */
 
-const cartModel = mongoose.model("carts", cartsSchema);
+// const cartModel = mongoose.model("carts", cartsSchema);
 
-export default cartModel;
+// export default cartModel;

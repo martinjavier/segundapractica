@@ -2,7 +2,7 @@ import productModel from "../db-models/product.model.js";
 
 export default class ProductManager {
   constructor() {
-    console.log("Working with product using MongoDB");
+    //console.log("Working with product using MongoDB");
   }
 
   // POSTMAN GET http://localhost:8080/api/products

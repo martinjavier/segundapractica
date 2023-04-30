@@ -1,11 +1,42 @@
 import passport from "passport";
-import LocalStrategy from "passport-local";
 import GithubStrategy from "passport-github2";
-import { UserModel } from "../dao/db-models/user.model.js";
-import { createHash } from "../utils.js";
-import { isValidPassword } from "../utils.js";
+import jwt from "passport-jwt";
+import { options } from "../config/options.js";
 
-const initializedPassport = () => {
+const jwtStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
+
+export const initializedPassport = () => {
+  // New Strategy with Passport JWT
+  passport.use(
+    "authJWT",
+    new jwtStrategy(
+      {
+        // Extract TOKEN from cookie
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: options.server.secretToken,
+      },
+      async (jwt_payload, done) => {
+        try {
+          return done(null, jwt_payload);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+};
+
+export const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    // Extract the token
+    token = req.cookies[options.server.cookieToken];
+  }
+  return token;
+};
+
+/*
   passport.use(
     "signupStrategy",
     new LocalStrategy(
@@ -94,16 +125,14 @@ const initializedPassport = () => {
       }
     )
   );
+  */
+// SERIALIZAR y DESERIALIZAR USUARIOS
+// passport.serializeUser((user, done) => {
+//   return done(null, user._id); // session {cookie, passport:user.id}
+// });
+// passport.deserializeUser(async (id, done) => {
+//   const user = await UserModel.findById(id);
+//   return done(null, user); // => req.user = user
+// });
 
-  // SERIALIZAR y DESERIALIZAR USUARIOS
-  passport.serializeUser((user, done) => {
-    return done(null, user._id); // session {cookie, passport:user.id}
-  });
-
-  passport.deserializeUser(async (id, done) => {
-    const user = await UserModel.findById(id);
-    return done(null, user); // => req.user = user
-  });
-};
-
-export { initializedPassport };
+//export { initializedPassport };

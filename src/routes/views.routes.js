@@ -30,10 +30,62 @@ router.get("/profile", async (req, res) => {
   }
 });
 
-router.get("/products", async (req, res) => {
-  try {
-    let prodManager = new ProductManager();
-    let { page, limit } = req.query;
+router.get(
+  "/products",
+  passport.authenticate("authJWT", { session: false }),
+  async (req, res) => {
+    try {
+      let prodManager = new ProductManager();
+      let { limit = 10, page = 1, category, stock, sort = "asc" } = req.query;
+      const stockValue = stock == 0 ? undefined : parseInt(stock);
+      if (!["asc", "desc"].includes(sort)) {
+        return res.json({ status: "error", message: "Invalid Order" });
+      }
+      const sortValue = sort === "asc" ? 1 : -1;
+      let query = {};
+      if (category && stockValue) {
+        query = { category: category, stock: { $gte: stockValue } };
+      } else {
+        if (category || stockValue) {
+          if (category) {
+            query = { category: category };
+          } else {
+            query = { stock: { $gte: stockValue } };
+          }
+        }
+      }
+      const result = await productManager.getPaginateProducts(query, {
+        page,
+        limit,
+        sort: { price: sortValue },
+        lean: true,
+      });
+      const baseUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
+      const data = {
+        email: req.user.email,
+        status: "success",
+        payload: result.docs,
+        totalDocs: result.totalDocs,
+        totalPages: result.totalPages,
+        prevPage: result.prevPage,
+        nextPage: result.nextPage,
+        page: result.page,
+        hasPrevPage: result.hasPrevPage,
+        hasNextPage: result.hasNextPage,
+        prevLink: result.hasPrevPage
+          ? `${baseUrl.replace(
+              `page=${result.page}`,
+              `page=${result.prevPage}`
+            )}`
+          : null,
+        nextLink: result.hasNextPage
+          ? baseUrl.includes("page")
+            ? baseUrl.replace(`page=${result.page}`, `page=${result.nextPage}`)
+            : baseUrl.concat(`?page=${result.nextPage}`)
+          : null,
+      };
+      res.render("products", data);
+      /*
     let products = await prodManager.getProducts(page, limit);
     res.render("products", {
       products: products,
@@ -42,11 +94,13 @@ router.get("/products", async (req, res) => {
       email: JSON.stringify(req.user.email),
       role: JSON.stringify(req.user.role).toUpperCase(),
     });
-  } catch (error) {
-    alert("Must be authenticated");
-    res.redirect("/login");
+    */
+    } catch (error) {
+      alert("Must be authenticated");
+      res.redirect("/login");
+    }
   }
-});
+);
 
 router.get("/product/:id", async (req, res) => {
   let prodManager = new ProductManager();

@@ -2,7 +2,7 @@ import messageModel from "../db-models/message.model.js";
 
 export default class MessageManager {
   constructor() {
-    console.log("Working with messages using MongoDB");
+    //console.log("Working with messages using MongoDB");
   }
 
   getMessages = async () => {

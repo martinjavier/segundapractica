@@ -1,8 +1,8 @@
-import cartModel from "../db-models/cart.model.js";
+import { cartModel } from "../db-models/cart.model.js";
 
 export default class CartManager {
   constructor() {
-    console.log("Working with carts using MongoDB");
+    //console.log("Working with carts using MongoDB");
   }
 
   // POSTMAN GET http://localhost:8080/api/carts
