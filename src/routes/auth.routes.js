@@ -96,8 +96,7 @@ authRouter.post("/signup", async (req, res) => {
 
 authRouter.get("/logout", async (req, res) => {
   req.logout();
-  res.clearCookie(options.server.cookieToken);
-  res.redirect("/login");
+  res.clearCookie(options.server.cookieToken).redirect("/login");
 });
 
 export default authRouter;
