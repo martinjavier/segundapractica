@@ -4,25 +4,27 @@ import { ProductManager } from "../dao/index.js";
 import { MessageManager } from "../dao/index.js";
 import passport from "passport";
 import alert from "alert";
+import { isUserAuthenticate } from "../middlewares/validations.js";
 
-const router = Router();
+const viewsRouter = Router();
 
 let products = [];
 
-router.get("/", async (req, res) => {
+viewsRouter.get("/", async (req, res) => {
   res.render("login");
 });
 
-router.get("/login", async (req, res) => {
+viewsRouter.get("/login", async (req, res) => {
   res.render("login");
 });
 
-router.get("/signup", async (req, res) => {
+viewsRouter.get("/signup", async (req, res) => {
   res.render("signup");
 });
 
-router.get("/profile", async (req, res) => {
+viewsRouter.get("/profile", async (req, res) => {
   try {
+    console.log(req.user);
     res.render("profile");
   } catch (error) {
     alert("Must be authenticated");
@@ -30,18 +32,25 @@ router.get("/profile", async (req, res) => {
   }
 });
 
-router.get(
+viewsRouter.get(
   "/products",
   passport.authenticate("authJWT", { session: false }),
   async (req, res) => {
+    console.log("Products req.user" + req.user);
     try {
-      let prodManager = new ProductManager();
       let { limit = 10, page = 1, category, stock, sort = "asc" } = req.query;
+      // console.log("LIMIT: " + limit);
+      // console.log("PAGE: " + page);
+      // console.log("CATEGORY: " + category);
+      // console.log("STOCK: " + stock);
+      // console.log("SORT: " + sort);
       const stockValue = stock == 0 ? undefined : parseInt(stock);
+      // console.log("stockValue: " + stock);
       if (!["asc", "desc"].includes(sort)) {
         return res.json({ status: "error", message: "Invalid Order" });
       }
       const sortValue = sort === "asc" ? 1 : -1;
+      // console.log("sortValue: " + sortValue);
       let query = {};
       if (category && stockValue) {
         query = { category: category, stock: { $gte: stockValue } };
@@ -54,12 +63,14 @@ router.get(
           }
         }
       }
+      // console.log("QUERY: " + query);
       const result = await productManager.getPaginateProducts(query, {
         page,
         limit,
         sort: { price: sortValue },
         lean: true,
       });
+      console.log("RESULT: " + result);
       const baseUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
       const data = {
         email: req.user.email,
@@ -85,6 +96,7 @@ router.get(
           : null,
       };
       res.render("products", data);
+
       /*
     let products = await prodManager.getProducts(page, limit);
     res.render("products", {
@@ -102,14 +114,14 @@ router.get(
   }
 );
 
-router.get("/product/:id", async (req, res) => {
+viewsRouter.get("/product/:id", async (req, res) => {
   let prodManager = new ProductManager();
   let prodId = req.params.id;
   let product = await prodManager.getOneProd(prodId);
   res.render("oneproduct", { product: product });
 });
 
-router.get("/cart/:cid", async (req, res) => {
+viewsRouter.get("/cart/:cid", async (req, res) => {
   let cartManager = new CartManager();
   try {
     let cartId = req.params.cid;
@@ -120,7 +132,7 @@ router.get("/cart/:cid", async (req, res) => {
   }
 });
 
-router.get("/carts", async (req, res) => {
+viewsRouter.get("/carts", async (req, res) => {
   let prodManager = new ProductManager();
   let products = await prodManager.getProducts();
   let cartManager = new CartManager();
@@ -128,10 +140,10 @@ router.get("/carts", async (req, res) => {
   res.render("carts", { carts: carts });
 });
 
-router.get("/chat", async (req, res) => {
+viewsRouter.get("/chat", async (req, res) => {
   let messageManager = new MessageManager();
   let messages = await messageManager.getMessages();
   res.render("chat", { messages: messages });
 });
 
-export default router;
+export default viewsRouter;

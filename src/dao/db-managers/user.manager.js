@@ -1,5 +1,4 @@
-import { UserModel } from "../db-models/user.model.js";
-
+import UserModel from "../db-models/user.model.js";
 class UserManager {
   constructor(model) {
     this.model = model;

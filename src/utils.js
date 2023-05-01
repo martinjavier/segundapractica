@@ -1,16 +1,14 @@
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-import * as url from "url";
+import path from "path";
 import bcrypt from "bcrypt";
+import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-export default __dirname;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+export { __dirname };
 
 export const createHash = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync());
 };
 
-export const isValidPassword = (user, loginPassword) => {
-  return bcrypt.compareSync(loginPassword, user.password);
+export const isValidPassword = (user, password) => {
+  return bcrypt.compareSync(password, user.password);
 };

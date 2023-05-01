@@ -1,23 +1,25 @@
 import express from "express";
 import { engine } from "express-handlebars";
 import { options } from "./config/options.js";
-import __dirname from "./utils.js";
+import { __dirname } from "./utils.js";
 import path from "path";
+import { productsRouter } from "./routes/products.routes.js";
+import cartsRouter from "./routes/carts.routes.js";
+import viewsRouter from "./routes/views.routes.js";
+import authRouter from "./routes/auth.routes.js";
+import messageRouter from "./routes/message.routes.js";
 import "./config/dbConnection.js";
-import productsRoutes from "./routes/products.routes.js";
-import cartsRoutes from "./routes/carts.routes.js";
-import viewsRoutes from "./routes/views.routes.js";
-import authRoutes from "./routes/auth.routes.js";
-import messagesRoutes from "./routes/message.routes.js";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
 import { MessageManager } from "../src/dao/index.js";
-import { CartManager } from "../src/dao/index.js";
-import { ProductManager } from "../src/dao/index.js";
-import { UserManager } from "../src/dao/index.js";
+import messageModel from "./dao/db-models/message.model.js";
 import passport from "passport";
-import { initializedPassport } from "../src/config/passport.config.js";
+import { initializedPassport } from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
+
+// SERVICE
+const messages = [];
+const messageManager = new MessageManager(messageModel);
 
 // SERVER
 const port = options.server.port;
@@ -29,17 +31,17 @@ const httpServer = app.listen(port, () => {
 // SOCKET SERVER
 const socketServer = new Server(httpServer);
 
-const messages = [];
-const messageManager = new MessageManager();
-const connectionString = "";
-
 // Midlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + "/../public"));
+app.use(express.static(path.join(__dirname + "/../public")));
 app.use(cookieParser());
 
 httpServer.on("error", (error) => console.log(`Error in server ${error}`));
+
+// Config PASSPORT
+initializedPassport();
+app.use(passport.initialize());
 
 // Handlebars
 app.engine("handlebars", engine());
@@ -47,24 +49,11 @@ app.set("view engine", "handlebars");
 app.set("views", __dirname + "/views");
 
 // Routers
-app.use("/", viewsRoutes);
-app.use("/api/products", productsRoutes);
-app.use("/api/carts", cartsRoutes);
-app.use("/api/messages", messagesRoutes);
-app.use("/api/sessions", authRoutes);
-
-app.use(function (req, res, next) {
-  res.locals.session = req.session;
-  next();
-});
-
-// Config PASSPORT
-initializedPassport();
-app.use(passport.initialize());
-
-// mongoose.connect(connectionString).then((conn) => {
-//   console.log("Connected To DB!");
-// });
+app.use("/", viewsRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartsRouter);
+app.use("/api/messages", messageRouter);
+app.use("/api/sessions", authRouter);
 
 // SOCKET SERVER CONFIG
 
@@ -98,3 +87,14 @@ socketServer.on("connection", (socket) => {
     socketServer.emit("input-changed", JSON.stringify(messages));
   });
 });
+
+/*
+app.use(function (req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
+*/
+
+// mongoose.connect(connectionString).then((conn) => {
+//   console.log("Connected To DB!");
+// });

@@ -1,7 +1,7 @@
 import passport from "passport";
 import GithubStrategy from "passport-github2";
 import jwt from "passport-jwt";
-import { options } from "../config/options.js";
+import { options } from "./options.js";
 
 const jwtStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;

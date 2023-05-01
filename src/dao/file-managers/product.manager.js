@@ -1,12 +1,12 @@
 import fs from "fs";
-import __dirname from "../../utils.js";
+import { __dirname } from "../../utils.js";
 import { getNextId } from "./utils.js";
 
 const path = __dirname + "/dao/file-managers/files/Products.json";
 
 export default class ProductManager {
-  constructor() {
-    console.log("Working with products using filesystem");
+  constructor(model) {
+    this.model = model;
   }
 
   getAll = async () => {

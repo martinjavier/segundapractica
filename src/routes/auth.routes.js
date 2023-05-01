@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { UserModel } from "../dao/db-models/user.model.js";
-import { UserManager } from "../../src/dao/index.js";
+import UserModel from "../dao/db-models/user.model.js";
+//import { UserManager } from "../../src/dao/index.js";
+import UserManager from "../dao/db-managers/user.manager.js";
 import { createHash } from "../utils.js";
 import { isValidPassword } from "../utils.js";
 import passport from "passport";
@@ -15,12 +16,22 @@ const userManager = new UserManager(UserModel);
 
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  console.log("EMAIL: " + email);
+  console.log("PASSWORD: " + password);
   try {
     const user = await userManager.getUserByEmail(email);
+    //console.log("USUARIO: " + JSON.stringify(user));
     if (user) {
-      if (isValidPassword(password, user)) {
+      //console.log("USUARIO EXISTE");
+      if (isValidPassword(user, password)) {
+        //console.log("PASSWORD ES VÁLIDO");
         const token = jwt.sign(
-          { first_name: user.first_name, email: user.email, role: user.role },
+          {
+            _id: user._id,
+            first_name: user.first_name,
+            email: user.email,
+            role: user.role,
+          },
           options.server.secretToken,
           { expiresIn: "24h" }
         );
@@ -38,7 +49,7 @@ authRouter.post("/login", async (req, res) => {
       res.redirect("/signup");
     }
   } catch (error) {
-    res.json({ stats: "error", message: error.message });
+    res.json({ stats: "errorLogin", message: error.message });
   }
 });
 
@@ -61,6 +72,7 @@ authRouter.post("/signup", async (req, res) => {
       const userCreated = await userManager.addUser(newUser);
       const token = jwt.sign(
         {
+          _id: userCreated._id,
           first_name: userCreated.first_name,
           email: userCreated.email,
           role: userCreated.role,
@@ -82,79 +94,10 @@ authRouter.post("/signup", async (req, res) => {
   }
 });
 
-// router.post(
-//   "/signup",
-//   passport.authenticate("signupStrategy", {
-//     failureRedirect: "/api/sessions/failure-signup",
-//   }),
-//   (req, res) => {
-//     res.redirect("/products");
-//   }
-// );
-
-// router.get("/failure-signup", (req, res) => {
-//   res.send(
-//     `<div>There was a problem with the signup, try again <a href='/signup'>Signup</a></div>`
-//   );
-// });
-
-// router.get("/github", passport.authenticate("githubSignup"));
-
-// router.get(
-//   "/github-callback",
-//   passport.authenticate("githubSignup", {
-//     failureRedirect: "/api/sessions/failure-signup",
-//   }),
-//   (req, res) => {
-//     //res.send("Usuario Autenticado");
-//     res.redirect("/products");
-//   }
-// );
-
-// router.post(
-//   "/login",
-//   passport.authenticate("loginStrategy", {
-//     failureRedirect: "/api/sessions/login-failed",
-//   }),
-//   async (req, res) => {
-//     if (!req.user) {
-//       return res.status(401).send({ error: "Invalid Credentials" });
-//     }
-//     req.session.userId = req.user._id;
-//     res.redirect("/products");
-//   }
-// );
-
-// router.get("/login-failed", (req, res) => {
-//   //res.send({ error: "Failed login" });
-//   alert("Wrong Credentials");
-//   res.redirect("/login");
-// });
-
-// router.post("/forgot", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await UserModel.findOne({ email: email });
-//     if (user) {
-//       user.password = createHash(password);
-//       const userUpdate = await UserModel.findOneAndUpdate(
-//         { email: user.email },
-//         user
-//       );
-//       return res.send("Contraseña Actualizada");
-//     } else {
-//       return res.send(
-//         `Usuario no está registrado <a href="/signup">Signup</a>`
-//       );
-//     }
-//   } catch (error) {
-//     return res.send("No se pudo restaurar la contraseña");
-//   }
-// });
-
-// router.get("/logout", async (req, res) => {
-//   req.logout();
-//   res.redirect("/login");
-// });
+authRouter.get("/logout", async (req, res) => {
+  req.logout();
+  res.clearCookie(options.server.cookieToken);
+  res.redirect("/login");
+});
 
 export default authRouter;
