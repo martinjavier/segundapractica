@@ -16,15 +16,10 @@ const userManager = new UserManager(UserModel);
 
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log("EMAIL: " + email);
-  console.log("PASSWORD: " + password);
   try {
     const user = await userManager.getUserByEmail(email);
-    //console.log("USUARIO: " + JSON.stringify(user));
     if (user) {
-      //console.log("USUARIO EXISTE");
       if (isValidPassword(user, password)) {
-        //console.log("PASSWORD ES VÁLIDO");
         const token = jwt.sign(
           {
             _id: user._id,
@@ -39,7 +34,7 @@ authRouter.post("/login", async (req, res) => {
           .cookie(options.server.cookieToken, token, {
             httpOnly: true,
           })
-          .redirect("/products");
+          .redirect("/productos");
       } else {
         alert("Wrong Credentials");
         res.redirect("/login");
@@ -84,7 +79,7 @@ authRouter.post("/signup", async (req, res) => {
         .cookie(options.server.cookieToken, token, {
           httpOnly: true,
         })
-        .redirect("/products");
+        .redirect("/productos");
     } else {
       alert("User was already registered");
       res.redirect("/login");

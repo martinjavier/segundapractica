@@ -1,89 +1,28 @@
-<div style="background:blueviolet;color:white;padding:10px">Bienvenido {{email}}</div>
-<h1>Products</h1>
-<br/>
+<div style="background:blueviolet;color:white;padding:10px">Bienvenido
+  {{email}}</div>
+<h2>PRODUCTS</h2>
 {{#if totalDocs}}
-    Products List
-    {{#each payload}}
-        <ul>
-            <li> {{this.title}} - Price: {{this.price}}</li>
-            <a href="/products/{{this._id}}">View Details</a>
-            <button onclick="addToCart(`{{this._id}}`)">Add To Cart</button>
-        </ul>
-    {{/each}}
-    <div>
-        {{#if hasPrevPage}}
-            <a href={{prevLink}}> << Prevoius</a>
-        {{/if}}
-        {{this.page}}
-        {{#if hasNextPage}}
-            <a href={{nextLink}}>Next >></a>
-        {{/if}}
-    </div>
-{{else}}
-    <p>There is no products</p>
-{{/if}}
-<script src="/js/products.js"></script>
-
-<!--
-
-<div>
-  <div id="productList"></div>
+  Products List
+  {{#each payload}}
+    <ul>
+      <li> {{this.title}} - Price: {{this.price}}</li>
+      <a href="/products/{{this._id}}">View Details</a>
+      <button onclick="addToCart(`{{this._id}}`)">Add To Cart</button>
+    </ul>
+  {{/each}}
   <div>
-    <div
-      style="width:80%; background-color: #e6e4e4; font-size: 25px; color:#000000"
-    >
-      <h3>Bienvenido {{name}} {{email}} {{role}}</h3>
-      <a href="/api/sessions/logout">Logout</a>
-    </div>
-    <div>
-      <h3>Products</h3>
-    </div>
-    <table style="width:80%; background-color: #555555; font-size: 25px;">
-      <tr style="background-color: #000000;">
-        <td><b>id</b></td>
-        <td><b>title</b></td>
-        <td><b>description</b></td>
-        <td><b>code</b></td>
-        <td><b>price</b></td>
-        <td><b>status</b></td>
-        <td><b>stock</b></td>
-        <td><b>category</b></td>
-        <td><b>thumbnails</b></td>
-        <td><b>AddToCart</b></td>
-        <td><b>ShowProduct</b></td>
-      </tr>
-      {{#each products.docs}}
-        <tr>
-          <td headers="id">{{_id}}</td>
-          <td headers="title">{{title}}</td>
-          <td headers="description">{{description}}</td>
-          <td headers="code">{{code}}</td>
-          <td headers="price">{{price}}</td>
-          <td headers="status">{{status}}</td>
-          <td headers="stock">{{stock}}</td>
-          <td headers="category">{{category}}</td>
-          <td headers="thumbnails">{{thumbnails}}</td>
-          <td headers="AddToCart"><a
-              href="/api/carts/643dcb7726deb74740df26c3/product/{{_id}}"
-            >Add</a></td>
-          <td headers="ShowProduct"><a href="/product/{{_id}}">Show</a></td>
-        </tr>
-      {{/each}}
-    </table>
-    <div>
-      {{#if products.hasPrevPage}}
-        <a href="/products?page={{products.prevPage}}">Prevoius</a>
-      {{/if}}
-      <span>Page {{products.page}} de {{products.totalPages}}</span>
-      {{#if products.hasNextPage}}
-        <a href="/products?page={{products.nextPage}}">Next</a>
-      {{/if}}
-    </div>
+    {{#if hasPrevPage}}
+      <a href={{prevLink}}>Prevoius</a>
+    {{/if}}
+    {{this.page}}
+    {{#if hasNextPage}}
+      <a href={{nextLink}}>Next</a>
+    {{/if}}
   </div>
-</div>
+{{else}}
+  <p>There is no products</p>
+{{/if}}
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script>
+<a href="/api/sessions/logout">Close Session</a>
 
-
--->
+<script src="/js/products.js"></script>
