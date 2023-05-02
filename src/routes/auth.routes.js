@@ -50,7 +50,7 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/signup", async (req, res) => {
   try {
-    const { first_name, last_name, email, password } = req.body;
+    const { first_name, last_name, email, age, password } = req.body;
     const user = await userManager.getUserByEmail(email);
     if (!user) {
       let role = "user";
@@ -61,6 +61,7 @@ authRouter.post("/signup", async (req, res) => {
         first_name,
         last_name,
         email,
+        age,
         password: createHash(password),
         role,
       };
