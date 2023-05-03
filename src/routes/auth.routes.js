@@ -14,6 +14,10 @@ const userManager = new UserManager(UserModel);
 
 // Rutas de Autenticación
 
+authRouter.get("/current", async (req, res) => {
+  res.redirect("/current");
+});
+
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {

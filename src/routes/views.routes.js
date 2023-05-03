@@ -25,6 +25,29 @@ viewsRouter.get("/signup", async (req, res) => {
 });
 
 viewsRouter.get(
+  "/current",
+  passport.authenticate("authJWT", { session: false }),
+  async (req, res) => {
+    try {
+      if (req.user) {
+        const userInfo = {
+          id: req.user._id,
+          first_name: req.user.first_name,
+          email: req.user.email,
+          role: req.user.role,
+        };
+        res.render("current", userInfo);
+      } else {
+        return res.send({ message: "User must be authorized" });
+      }
+    } catch (error) {
+      alert("Must be authenticated");
+      res.redirect("/login");
+    }
+  }
+);
+
+viewsRouter.get(
   "/profile",
   passport.authenticate("authJWT", { session: false }),
   async (req, res) => {
