@@ -28,7 +28,9 @@ cartSchema.pre("find", function () {
 });
 
 // El parámetro "products.id" se refiere a la propiedad "id" del campo "products" del modelo "Cart".
-export const cartModel = mongoose.model(cartCollection, cartSchema);
+const DbCartModel = mongoose.model(cartCollection, cartSchema);
+
+export default DbCartModel;
 
 //cartsSchema.plugin(mongoosePaginate);
 

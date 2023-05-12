@@ -1,16 +1,26 @@
 import { Router } from "express";
-import { ProductManager } from "../dao/index.js";
-//importamos el modelo de productos
-import ProductModel from "../dao/db-models/product.model.js";
+import { ProductManager, ProductModel } from "../dao/index.js";
 import { checkValidProductFields } from "../middlewares/validations.js";
+import {
+  getProductsController,
+  getProductByIdController,
+  createProductController,
+  updateProductController,
+  deleteProductController,
+} from "../controllers/products.controller.js";
 
-//services
-// const productManager = new ProductManagerFile('products.json');
 const productManager = new ProductManager(ProductModel);
 
-const router = Router();
+const productsRouter = Router();
 
-router.get("/", async (req, res) => {
+productsRouter.get("/", getProductsController);
+productsRouter.get("/:pid", getProductByIdController);
+productsRouter.post("/", checkValidProductFields, createProductController);
+productsRouter.put("/:pid", checkValidProductFields, updateProductController);
+productsRouter.delete("/:pid", deleteProductController);
+
+/*
+productsRouter.get("/", async (req, res) => {
   try {
     const { limit = 10, page = 1, category, stock, sort = "asc" } = req.query;
     const stockValue = stock == 0 ? undefined : parseInt(stock);
@@ -61,8 +71,10 @@ router.get("/", async (req, res) => {
     res.status(400).json({ status: "error", message: error.message });
   }
 });
+*/
 
-router.get("/:pid", async (req, res) => {
+/*
+productsRouter.get("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
     const product = await productManager.getProductById(pid);
@@ -72,9 +84,11 @@ router.get("/:pid", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+*/
 
+/*
 //ruta para agregar un producto
-router.post("/", checkValidProductFields, async (req, res) => {
+productsRouter.post("/", checkValidProductFields, async (req, res) => {
   try {
     const body = req.body;
     body.status = Boolean(body.status);
@@ -91,9 +105,11 @@ router.post("/", checkValidProductFields, async (req, res) => {
     res.status(400).json({ status: "error", message: error.message });
   }
 });
+*/
 
+/*
 //ruta para actualizar un producto
-router.put("/:pid", checkValidProductFields, async (req, res) => {
+productsRouter.put("/:pid", checkValidProductFields, async (req, res) => {
   try {
     const productId = req.params.pid;
     const body = req.body;
@@ -112,9 +128,11 @@ router.put("/:pid", checkValidProductFields, async (req, res) => {
     res.status(400).json({ message: error });
   }
 });
+*/
 
+/*
 //ruta para eliminar el producto
-router.delete("/:pid", async (req, res) => {
+productsRouter.delete("/:pid", async (req, res) => {
   try {
     const productId = req.params.pid;
     //luego eliminamos el producto
@@ -124,8 +142,9 @@ router.delete("/:pid", async (req, res) => {
     res.status(400).json({ message: error });
   }
 });
+*/
 
-export { router as productsRouter };
+export default productsRouter;
 
 /*
 import { Router, json } from "express";

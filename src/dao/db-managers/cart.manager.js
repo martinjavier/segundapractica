@@ -1,38 +1,36 @@
-import { cartModel } from "../db-models/cart.model.js";
-
-export default class CartManager {
-  constructor() {
-    //console.log("Working with carts using MongoDB");
+class CartManager {
+  constructor(model) {
+    this.model = model;
   }
 
   // POSTMAN GET http://localhost:8080/api/carts
   getCarts = async () => {
-    const carts = await cartModel.find().lean();
+    const carts = await this.model.find().lean();
     return carts;
   };
 
   // POSTMAN POST http://localhost:8080/api/carts { "products": [ { "id": "642c517ccbcc6f6acabf0a54", "quantity": 500 } ] }
   create = async (cart) => {
-    const result = await cartModel.create(cart);
+    const result = await this.model.create(cart);
     return result;
   };
 
   // POSTMAN PUT http://localhost:8080/api/carts/642c94072f2ec4bf4a7b4923/product/642c517ccbcc6f6acabf0a54
   addProduct = async (cartId, productId) => {
-    const cart = await cartModel.findById(cartId);
+    const cart = await this.model.findById(cartId);
     cart.products.push({ productId });
     return cart.save();
   };
 
   // POSTMAN DELETE http://localhost:8080/api/carts/642660d39cd3ec80e43f50ab
   delete = async (cartId) => {
-    const result = await cartModel.deleteOne(cartId);
+    const result = await this.model.deleteOne(cartId);
     return result;
   };
 
   // POSTMAN GET http://localhost:8080/api/carts/642c52b03c49ee17a8574a02
   getOneCart = async (cartId) => {
-    const cart = await cartModel.findById(cartId);
+    const cart = await this.model.findById(cartId);
     return cart;
   };
 
@@ -41,7 +39,7 @@ export default class CartManager {
     if (!cartId || !prodId) {
       console.log("falta Información");
     } else {
-      let prodDeleted = await cartModel.updateOne(
+      let prodDeleted = await this.model.updateOne(
         { _id: cartId },
         { $pull: { products: { _id: prodId } } }
       );
@@ -55,11 +53,11 @@ export default class CartManager {
       if (!cartId || !prodId) {
         console.log("falta Información");
       } else {
-        let prodDeleted = await cartModel.updateOne(
+        let prodDeleted = await this.model.updateOne(
           { _id: cartId },
           { $pull: { products: { id: prodId } } }
         );
-        const cart = await cartModel.findById(cartId);
+        const cart = await this.model.findById(cartId);
         cart.products.push({ prodId });
         return cart.save();
       }
@@ -68,3 +66,5 @@ export default class CartManager {
     }
   };
 }
+
+export default CartManager;

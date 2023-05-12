@@ -2,7 +2,7 @@ import fs from "fs";
 import { __dirname } from "../../utils.js";
 import { getNextId } from "./utils.js";
 
-const path = __dirname + "/dao/file-managers/files/Carts.json";
+const path = __dirname + "/dao/local-files/carts.json";
 
 export default class CartManager {
   constructor() {

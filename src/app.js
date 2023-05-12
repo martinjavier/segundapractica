@@ -3,12 +3,14 @@ import { engine } from "express-handlebars";
 import { options } from "./config/options.js";
 import { __dirname } from "./utils.js";
 import path from "path";
-import { productsRouter } from "./routes/products.routes.js";
+// ROUTES
+import productsRouter from "./routes/products.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import viewsRouter from "./routes/views.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import messageRouter from "./routes/message.routes.js";
-import "./config/dbConnection.js";
+// DATABASE
+import { ConnectionDb } from "./config/dbConnection.js";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
 import { MessageManager } from "../src/dao/index.js";
@@ -27,6 +29,9 @@ const app = express();
 const httpServer = app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+// Only One Mongo Connection
+const dbInstance = ConnectionDb.getInstance();
 
 // SOCKET SERVER
 const socketServer = new Server(httpServer);

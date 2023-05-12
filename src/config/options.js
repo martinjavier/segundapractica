@@ -12,6 +12,8 @@ export const options = {
   fileSystem: {
     usersFileName: "users.json",
     productsFileName: "products.json",
+    messagesFileName: "messages.json",
+    cartsFileName: "carts.json",
   },
   mongoDB: {
     url: `mongodb+srv://${MONGO_DB_USER}:${MONGO_DB_PASS}@cluster0.oonlc.mongodb.net/${MONGO_DB_NAME}?retryWrites=true&w=majority`,

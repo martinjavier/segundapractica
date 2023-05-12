@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { CartManager } from "../dao/index.js";
-import { ProductManager } from "../dao/index.js";
-import ProductModel from "../dao/db-models/product.model.js";
+import { CartManager, CartModel } from "../dao/index.js";
+import { ProductManager, ProductModel } from "../dao/index.js";
 import { MessageManager } from "../dao/index.js";
 import passport from "passport";
 import alert from "alert";
@@ -9,6 +8,7 @@ import { isUserAuthenticate } from "../middlewares/validations.js";
 
 const viewsRouter = Router();
 const productManager = new ProductManager(ProductModel);
+const cartManager = new CartManager(CartModel);
 
 let products = [];
 
@@ -133,14 +133,12 @@ viewsRouter.get(
 );
 
 viewsRouter.get("/product/:id", async (req, res) => {
-  let prodManager = new ProductManager();
   let prodId = req.params.id;
-  let product = await prodManager.getOneProd(prodId);
+  let product = await productManager.getOneProd(prodId);
   res.render("oneproduct", { product: product });
 });
 
 viewsRouter.get("/cart/:cid", async (req, res) => {
-  let cartManager = new CartManager();
   try {
     let cartId = req.params.cid;
     let carts = await cartManager.getOneCart(cartId);
@@ -151,8 +149,6 @@ viewsRouter.get("/cart/:cid", async (req, res) => {
 });
 
 viewsRouter.get("/carts", async (req, res) => {
-  let prodManager = new ProductManager();
-  let products = await prodManager.getProducts();
   let cartManager = new CartManager();
   let carts = await cartManager.getCarts();
   res.render("carts", { carts: carts });

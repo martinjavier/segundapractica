@@ -1,7 +1,7 @@
 import fs from "fs";
 import { __dirname } from "../../utils.js";
 
-const path = __dirname + "/dao/file-managers/files/Messages.json";
+const path = __dirname + "/dao/local-files/messages.json";
 
 export default class MessageManager {
   constructor() {

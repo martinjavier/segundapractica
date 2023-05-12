@@ -2,7 +2,7 @@ import fs from "fs";
 import { __dirname } from "../../utils.js";
 import { getNextId } from "./utils.js";
 
-const path = __dirname + "/dao/file-managers/files/Products.json";
+const path = __dirname + "/dao/local-files/products.json";
 
 export default class ProductManager {
   constructor(model) {
