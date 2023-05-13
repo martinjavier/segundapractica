@@ -71,10 +71,10 @@ viewsRouter.get(
 );
 
 viewsRouter.get(
-  "/productos",
+  "/products",
   passport.authenticate("authJWT", { session: false }),
   async (req, res) => {
-    console.log("Products req.user" + req.user);
+    //console.log("Products req.user" + req.user);
     try {
       let { limit = 10, page = 1, category, stock, sort = "asc" } = req.query;
       const stockValue = stock == 0 ? undefined : parseInt(stock);

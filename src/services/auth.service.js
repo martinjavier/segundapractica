@@ -1,8 +1,8 @@
 import { UserManager, UserModel } from "../dao/index.js";
-import passport from "passport";
 import alert from "alert";
 import jwt from "jsonwebtoken";
 import { options } from "../config/options.js";
+import { isValidPassword, createHash } from "../utils.js";
 
 const userManager = new UserManager(UserModel);
 
@@ -45,5 +45,40 @@ export const signup = async (req, res) => {
     }
   } catch (error) {
     res.json({ stats: "error", message: error.message });
+  }
+};
+
+export const login = async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  try {
+    const user = await userManager.getUserByEmail(email);
+    if (user) {
+      if (isValidPassword(user, password)) {
+        const token = jwt.sign(
+          {
+            _id: user._id,
+            first_name: user.first_name,
+            email: user.email,
+            role: user.role,
+          },
+          options.server.secretToken,
+          { expiresIn: "24h" }
+        );
+        res
+          .cookie(options.server.cookieToken, token, {
+            httpOnly: true,
+          })
+          .redirect("/products");
+      } else {
+        alert("Wrong Credentials");
+        res.redirect("/login");
+      }
+    } else {
+      alert("User was not registered");
+      res.redirect("/signup");
+    }
+  } catch (error) {
+    res.json({ stats: "errorLogin", message: error.message });
   }
 };
