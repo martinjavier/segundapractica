@@ -1,23 +1,39 @@
 import { Router } from "express";
-import UserModel from "../dao/db-models/user.model.js";
-//import { UserManager } from "../../src/dao/index.js";
-import UserManager from "../dao/db-managers/user.manager.js";
 import { createHash } from "../utils.js";
 import { isValidPassword } from "../utils.js";
-import passport from "passport";
 import alert from "alert";
 import jwt from "jsonwebtoken";
 import { options } from "../config/options.js";
+import {
+  loginController,
+  redirectController,
+  signupController,
+  failSignup,
+  failLogin,
+  logoutController,
+} from "../controllers/auth.controller.js";
 
 const authRouter = Router();
-const userManager = new UserManager(UserModel);
 
 // Rutas de Autenticación
+
+authRouter.post("/signup", signupController, redirectController);
+
+authRouter.get("/failure-signup", failSignup);
+
+authRouter.post("/login", loginController, redirectController);
+
+authRouter.get("/failure-login", failLogin);
+
+authRouter.get("/logout", logoutController);
 
 authRouter.get("/current", async (req, res) => {
   res.redirect("/current");
 });
 
+export default authRouter;
+
+/*
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -51,7 +67,9 @@ authRouter.post("/login", async (req, res) => {
     res.json({ stats: "errorLogin", message: error.message });
   }
 });
+*/
 
+/*
 authRouter.post("/signup", async (req, res) => {
   try {
     const { first_name, last_name, email, age, password } = req.body;
@@ -93,10 +111,11 @@ authRouter.post("/signup", async (req, res) => {
     res.json({ stats: "error", message: error.message });
   }
 });
+*/
 
+/*
 authRouter.get("/logout", async (req, res) => {
   req.logout();
   res.clearCookie(options.server.cookieToken).redirect("/login");
 });
-
-export default authRouter;
+*/
